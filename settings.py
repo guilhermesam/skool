@@ -1,0 +1,1 @@
+SECRET_KEY = 'veq%#+)$nnmydelgzal_a=g#6tr4k8yg*7*z4dwduh_i#!_s40'

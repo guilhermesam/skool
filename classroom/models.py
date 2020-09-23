@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 
 
 class Student(models.Model):
@@ -17,21 +18,19 @@ class Student(models.Model):
 
 
 class Teacher(models.Model):
-    first_name = models.CharField(max_length=25, verbose_name="Primeiro nome do Professor(a)", null=False)
-    last_name = models.CharField(max_length=25, verbose_name="Último nome do Professor(a)", null=False)
+    first_name = models.CharField(max_length=25, verbose_name="Primeiro nome do Monitor(a)", null=False)
+    last_name = models.CharField(max_length=25, verbose_name="Último nome do Monitor(a)", null=False)
 
     class Meta:
-        verbose_name = 'Professor'
-        verbose_name_plural = 'Professores'
+        verbose_name = 'Monitor'
+        verbose_name_plural = 'Monitor'
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
 
 class Classroom(models.Model):
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name="Professor")
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Aluno")
-    hour = models.SmallIntegerField(verbose_name="Hora da aula")
+    hour = models.TimeField(verbose_name="Hora da aula", auto_now=True)
     date = models.DateField(verbose_name="Data da aula")
     subject = models.CharField(max_length=64, verbose_name="Assunto da aula")
 
@@ -40,4 +39,17 @@ class Classroom(models.Model):
         verbose_name_plural = 'Salas de Aula'
 
     def __str__(self):
-        return f"Aula do dia {self.date}, às {self.hour} horas"
+        date = datetime.strptime(str(self.date), '%Y-%m-%d').strftime('%d/%m/%Y')
+        hour = datetime.strptime(str(self.hour), '%H:%M:%S.%f').strftime('%H:%M')
+        return f"Aula do dia {date}, às {hour} horas"
+
+
+
+class ClassStudent(models.Model):
+    id_classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
+    id_student = models.ForeignKey(Student, on_delete=models.CASCADE)
+
+
+class ClassTeacher(models.Model):
+    id_classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
+    id_teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
